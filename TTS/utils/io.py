@@ -50,8 +50,13 @@ def load_fsspec(
         ) as f:
             return torch.load(f, map_location=map_location, **kwargs)
     else:
+        from TTS.tts.configs.xtts_config import XttsConfig
+        import torch.serialization
+
+        torch.serialization.add_safe_globals({"TTS.tts.configs.xtts_config.XttsConfig": XttsConfig})
+
         with fsspec.open(path, "rb") as f:
-            return torch.load(f, map_location=map_location, **kwargs)
+            return torch.load(f, map_location=map_location, weights_only=False, **kwargs)
 
 
 def load_checkpoint(
